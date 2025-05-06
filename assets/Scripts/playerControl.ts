@@ -67,27 +67,32 @@ export class PlayerControl extends Component {
     setInputActive(active: boolean) {
         if (active) {
             this.node.on(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
-            this.schedule(() => {
-                const { x, y } = this.node.getPosition();
-                const node = instantiate(this.bullet);
-                node.setParent(this.node.parent);
-                node.setPosition(x, y + 70);
-            }, 0.2);
-
-            this.schedule(() => {
-                const { x, y } = this.node.getPosition();
-                const curEnemy = this.getVisibleEnemies();
-                if (curEnemy.length > 0) {
-                    const node2 = instantiate(this.bullet2);
-                    const node2x = instantiate(this.bullet2);
-                    node2x.setParent(this.node.parent);
-                    node2.setParent(this.node.parent);
-                    node2.setPosition(x - 32, y + 23);
-                    node2x.setPosition(x + 32, y + 23);
-                }
-            }, 0.5);
+            this.schedule(this.scheduleBullet, 0.2);
+            this.schedule(this.scheduleSpecialBullet, 0.5);
         } else {
             this.node.off(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
+            this.unschedule(this.scheduleBullet);
+            this.unschedule(this.scheduleSpecialBullet);
+        }
+    }
+    
+    private scheduleBullet() {
+        const { x, y } = this.node.getPosition();
+        const node = instantiate(this.bullet);
+        node.setParent(this.node.parent);
+        node.setPosition(x, y + 70);
+    }
+    
+    private scheduleSpecialBullet() {
+        const { x, y } = this.node.getPosition();
+        const curEnemy = this.getVisibleEnemies();
+        if (curEnemy.length > 0) {
+            const node2 = instantiate(this.bullet2);
+            const node2x = instantiate(this.bullet2);
+            node2x.setParent(this.node.parent);
+            node2.setParent(this.node.parent);
+            node2.setPosition(x - 32, y + 23);
+            node2x.setPosition(x + 32, y + 23);
         }
     }
     // 开始函数

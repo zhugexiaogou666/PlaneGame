@@ -24,6 +24,8 @@ export class GameManager extends Component {
     public BgCtrl: BgControl | null = null; // 目标节点
     @property({ type: Node })
     public startMenu: Node | null = null;
+
+    private _currentState: GameState = GameState.GS_INIT;
     start() {
         this.setCurState(GameState.GS_INIT); // 第一初始化要在 start 里面调用
     }
@@ -40,6 +42,8 @@ export class GameManager extends Component {
         if (this.BgCtrl) {
             this.BgCtrl.onPhysics2D();
             this.BgCtrl._moveBG = true;
+            this.BgCtrl.currentBlood = 3;
+            this.BgCtrl.bloodNumber = 3;
         }
 
         setTimeout(() => {
@@ -72,6 +76,21 @@ export class GameManager extends Component {
         }
     }
 
+    endGame() {
+        if (this.startMenu) {
+            this.startMenu.active = true;
+        }
+
+        if (this.BgCtrl) {
+            this.BgCtrl._moveBG = false;
+        }
+
+
+        if (this.playerCtrl) {
+            this.playerCtrl.setInputActive(false);
+        }
+    }
+
     onStartButtonClicked() {
         this.setCurState(GameState.GS_PLAYING);
     }
@@ -85,6 +104,8 @@ export class GameManager extends Component {
     }
 
     setCurState(value: GameState) {
+        if (this._currentState === value) return;
+        this._currentState = value;
         switch (value) {
             case GameState.GS_INIT:
                 this.init();
@@ -95,13 +116,17 @@ export class GameManager extends Component {
             case GameState.GS_PAUSE:
                 break;
             case GameState.GS_END:
+                this.endGame();
                 break;
         }
     }
 
 
     update(deltaTime: number) {
-
+        if (this._currentState === GameState.GS_PLAYING &&
+            this.BgCtrl?.currentBlood <= 0) {
+            this.setCurState(GameState.GS_END);
+        }
     }
 }
 

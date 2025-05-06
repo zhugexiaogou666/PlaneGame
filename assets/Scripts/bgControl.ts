@@ -21,9 +21,19 @@ export class BgControl extends Component {
     private stepLabel: Label | null = null;
 
     private _bloodNumber: number = 3;
-    private _currentBlood: number = 3;
+    public _currentBlood: number = 3;
     private bloodNodes: Node[] = []; // 存储血条节点
     public _moveBG: boolean = false;
+
+    public get bloodNumber() {
+        return this._currentBlood;
+    }
+
+    public set bloodNumber(value: number) {
+        if (this._bloodNumber !== value) {
+            this._bloodNumber = Math.max(value, 0);
+        }
+    }
     // 带 setter 的血量属性
     public get currentBlood() {
         return this._currentBlood;
@@ -67,6 +77,16 @@ export class BgControl extends Component {
         }
     }
 
+    onChangeBlood(value: number = 1, isAdd: boolean = true) {
+        let curBlood = this.currentBlood;
+        if (!isAdd) {
+            curBlood = Math.max(curBlood - value, 0);
+        } else {
+            curBlood = Math.min(curBlood + value, this._bloodNumber);
+        }
+        this.currentBlood = curBlood; 
+    }
+
 
     onBeginContact(self: Collider2D, other: Collider2D) {
         // 定义子弹标签集合
@@ -107,6 +127,7 @@ export class BgControl extends Component {
                 const playerControl = player.getComponent(PlayerControl);
                 if (playerControl && enemyControl) {
                     playerControl.hit();
+                    this.onChangeBlood(1, false); // 扣血
                     // enemyControl.die();  
                 }
                 return;
