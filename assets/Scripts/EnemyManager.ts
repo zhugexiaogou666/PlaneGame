@@ -13,7 +13,7 @@ export class EnemyManager extends Component {
 
     tick: number = this.internal;
 
-    start() {
+    pushEnemy() {
         this.schedule(() => {
             const node = instantiate(this.enemy);
             node.parent = this.node;
@@ -22,6 +22,8 @@ export class EnemyManager extends Component {
             this.activeEnemies.push(node);
         }, 0.5);
     }
+
+    start() {}
 
 // 在 EnemyManager 中增加维护逻辑
 public removeEnemy(node: Node) {

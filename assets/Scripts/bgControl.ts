@@ -1,4 +1,4 @@
-import { _decorator, Component, director, Node, PhysicsSystem2D, Contact2DType, Collider2D, Label } from "cc";
+import { _decorator, Component, director, Node, PhysicsSystem2D, Contact2DType, Collider2D, Label, Prefab, instantiate } from "cc";
 import { BulletControl } from "./bulletControl";
 import { BulletControl2 } from "./bullet2Control";
 import { PlayerControl } from "./playerControl";
@@ -10,10 +10,33 @@ export class BgControl extends Component {
 
     @property({ type: PlayerControl })
     public playerCtrl: PlayerControl | null = null; // 目标节点
+    @property(Prefab)
+    blood: Prefab;
+    @property(Prefab)
+    bloodNone: Prefab;
+    @property({ type: Node })
+    zero: Node | null = null; // 目标节点
 
     @property({ type: Label })
     private stepLabel: Label | null = null;
 
+    private _bloodNumber: number = 3;
+    private _currentBlood: number = 3;
+    private bloodNodes: Node[] = []; // 存储血条节点
+    public _moveBG: boolean = false;
+    // 带 setter 的血量属性
+    public get currentBlood() {
+        return this._currentBlood;
+    }
+
+    public set currentBlood(value: number) {
+        if (this._currentBlood !== value) {
+            this._currentBlood = Math.min(Math.max(value, 0), this._bloodNumber);
+            this.updateBloodUI();
+        }
+    }
+
+    // 初始化物理系统
     onPhysics2D() {
         PhysicsSystem2D.instance.on(
             Contact2DType.BEGIN_CONTACT,
@@ -21,7 +44,29 @@ export class BgControl extends Component {
             this
         );
     }
-    start() { }
+
+    start() {
+        this.updateBloodUI(); // 初始化血条
+    }
+
+    // 血条更新方法
+    private updateBloodUI() {
+        // 清除旧血条
+        this.bloodNodes.forEach(node => node.destroy());
+        this.bloodNodes = [];
+
+        // 生成新血条
+        const startX = -180;
+        const step = 40;
+        for (let i = 0; i < this._bloodNumber; i++) {
+            const prefab = i < this._currentBlood ? this.blood : this.bloodNone;
+            const node = instantiate(prefab);
+            node.setPosition(startX + i * step, 370);
+            this.zero!.addChild(node);
+            this.bloodNodes.push(node);
+        }
+    }
+
 
     onBeginContact(self: Collider2D, other: Collider2D) {
         // 定义子弹标签集合
@@ -49,9 +94,9 @@ export class BgControl extends Component {
                 const enemyControl = enemy.getComponent(EnemyControl);
                 const bulletControl = bullet.getComponent(BulletControl) || bullet.getComponent(BulletControl2);
                 if (enemyControl && bulletControl) {
-                    enemyControl.die();
+                    enemyControl.die(() => { this.stepLabel.string = (parseInt(this.stepLabel.string) + 1).toString() });
                     bulletControl.die();
-                    this.stepLabel.string = (parseInt(this.stepLabel.string) + 1).toString();
+
                 }
                 return;
             }
@@ -72,15 +117,17 @@ export class BgControl extends Component {
     // 生命周期每帧调用函数
     update(deltaTime: number) {
         // 使用this.node.children获取当前节点下的子节点
-        for (let item of this.node.children) {
-            // 使用getPosition获取坐标信息
-            const { x, y } = item.getPosition();
-            // 计算移动坐标
-            const moveY = y - 100 * deltaTime;
-            item.setPosition(x, moveY);
-            // 如果超出屏幕 重新回到顶部，也就是当前位置加上两倍的高度
-            if (moveY < -870) {
-                item.setPosition(x, moveY + 851 * 2);
+        if (this._moveBG) {
+            for (let item of this.node.children) {
+                // 使用getPosition获取坐标信息
+                const { x, y } = item.getPosition();
+                // 计算移动坐标
+                const moveY = y - 100 * deltaTime;
+                item.setPosition(x, moveY);
+                // 如果超出屏幕 重新回到顶部，也就是当前位置加上两倍的高度
+                if (moveY < -870) {
+                    item.setPosition(x, moveY + 851 * 2);
+                }
             }
         }
     }

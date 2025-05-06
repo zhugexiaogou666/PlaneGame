@@ -45,8 +45,9 @@ export class EnemyControl extends Component {
     }
 
     // 敌机死亡调用
-    die() {
+    die(onDied?: () => void) {
         if (this.isDead) return;
+        onDied?.();
         this.isDead = true;
         this.playDead();
         setTimeout(() => {

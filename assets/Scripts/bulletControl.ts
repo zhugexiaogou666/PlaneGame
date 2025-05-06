@@ -7,12 +7,18 @@ export class BulletControl extends Component {
     isDead: boolean = false;
     start() { }
 
+    // 更新函数，每帧调用一次
     update(deltaTime: number) {
+        // 如果对象已经死亡，则直接返回
         if (this.isDead) return;
+        // 获取对象当前位置
         const { x, y } = this.node.getPosition();
+        // 计算对象下一帧的y坐标
         const moveY = y + 500 * deltaTime;
+        // 设置对象下一帧的位置
         this.node.setPosition(x, moveY);
-        if (moveY > 800) {
+        // 如果对象下一帧的y坐标大于800，则销毁对象
+        if (moveY > 400) {
             this.node.destroy();
         }
     }

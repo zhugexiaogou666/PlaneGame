@@ -1,6 +1,7 @@
 import { _decorator, Component, Label, Node, Vec3 } from 'cc';
 import { PlayerControl } from './playerControl';
 import { BgControl } from './bgControl';
+import { EnemyManager } from './EnemyManager';
 const { ccclass, property } = _decorator;
 
 enum GameState {
@@ -17,6 +18,8 @@ export class GameManager extends Component {
     public stepsLabel: Label | null = null; // 计步器
     @property({ type: PlayerControl })
     public playerCtrl: PlayerControl | null = null; // 目标节点
+    @property({ type: Node, tooltip: "同级敌人管理器" })
+    enemyManagerNode: Node = null;
     @property({ type: BgControl })
     public BgCtrl: BgControl | null = null; // 目标节点
     @property({ type: Node })
@@ -36,12 +39,18 @@ export class GameManager extends Component {
 
         if (this.BgCtrl) {
             this.BgCtrl.onPhysics2D();
+            this.BgCtrl._moveBG = true;
         }
 
         setTimeout(() => {
             if (this.playerCtrl) {
                 this.playerCtrl.setInputActive(true);
             }
+            const enemyManager = this.enemyManagerNode.getComponent(EnemyManager);
+            if (enemyManager) {
+                enemyManager.pushEnemy();
+            }
+
         }, 0.1);
 
     }
@@ -50,6 +59,11 @@ export class GameManager extends Component {
         if (this.startMenu) {
             this.startMenu.active = true;
         }
+
+        if (this.BgCtrl) {
+            this.BgCtrl._moveBG = false;
+        }
+
 
         if (this.playerCtrl) {
             this.playerCtrl.setInputActive(false);
