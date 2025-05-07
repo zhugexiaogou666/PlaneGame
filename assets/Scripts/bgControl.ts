@@ -61,6 +61,7 @@ export class BgControl extends Component {
     }
 
     // 血条更新方法
+    // 更新血条UI
     private updateBloodUI() {
         // 清除旧血条
         this.bloodNodes.forEach(node => node.destroy());
@@ -70,10 +71,15 @@ export class BgControl extends Component {
         const startX = -180;
         const step = 40;
         for (let i = 0; i < this._bloodNumber; i++) {
+            // 根据当前血量判断使用哪种血条预制体
             const prefab = i < this._currentBlood ? this.blood : this.bloodNone;
+            // 实例化预制体
             const node = instantiate(prefab);
+            // 设置位置
             node.setPosition(startX + i * step, 370);
+            // 添加到场景中
             this.zero!.addChild(node);
+            // 存储节点
             this.bloodNodes.push(node);
         }
     }
@@ -118,7 +124,6 @@ export class BgControl extends Component {
                 if (enemyControl && bulletControl) {
                     enemyControl.playHit(bulletHit, () => { this.stepLabel.string = (parseInt(this.stepLabel.string) + 1).toString() });
                     bulletControl.die();
-
                 }
                 return;
             }

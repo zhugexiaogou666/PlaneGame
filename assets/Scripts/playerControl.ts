@@ -1,4 +1,4 @@
-import { _decorator, Component, EventTouch, Node, Prefab, v3, instantiate, view, Rect, UITransform, v2, isValid, Vec3 } from "cc";
+import { _decorator, Component, EventTouch, Node, Prefab, v3, instantiate, view, Rect, UITransform, v2, isValid, Vec3, find } from "cc";
 import { EnemyManager } from "./EnemyManager";
 import { HitFlash } from "./HitFlash";
 import { GameManager } from "./GameManager";
@@ -56,7 +56,7 @@ export class PlayerControl extends Component {
 
         }
     }
-    reset() {
+    public reset() {
         if (this.gameManager) {
             this.gameManager.stepsLabel.string = "0";
         }
@@ -101,5 +101,9 @@ export class PlayerControl extends Component {
     // 开始函数
     start() {
         this.hitFlash = this.node.getComponent(HitFlash);
+        const gameManagerNode = find("Canvas/GameManager"); // 根据实际场景路径
+        if (gameManagerNode) {
+            this.gameManager = gameManagerNode.getComponent(GameManager);
+        }
     }
 }
