@@ -14,27 +14,38 @@ export class EnemyManager extends Component {
     tick: number = this.internal;
 
     pushEnemy() {
-        this.schedule(() => {
-            const node = instantiate(this.enemy);
-            node.parent = this.node;
-            node.setPosition(Math.random() * 320 - 160, 450);
-            this.node.addChild(node);
-            this.activeEnemies.push(node);
-        }, 0.5);
+        this.schedule(this.scheduleEnemy, 0.5);
     }
 
-    start() {}
 
-// 在 EnemyManager 中增加维护逻辑
-public removeEnemy(node: Node) {
-    const index = this.activeEnemies.findIndex(n => n === node);
-    if (index > -1) {
-        this.activeEnemies.splice(index, 1);
-        node.parent = null;
-        node.removeFromParent();
+    private scheduleEnemy() {
+        const node = instantiate(this.enemy);
+        node.parent = this.node;
+        node.setPosition(Math.random() * 320 - 160, 450);
+        this.node.addChild(node);
+        this.activeEnemies.push(node);
     }
-}
-    
+    // 开始函数
+    start() { }
+
+    clearEnemies() {
+        this.unschedule(this.scheduleEnemy);
+        this.activeEnemies.forEach(enemy => {
+            enemy.destroy();
+        })
+        this.activeEnemies = [];
+    }
+
+    // 在 EnemyManager 中增加维护逻辑
+    public removeEnemy(node: Node) {
+        const index = this.activeEnemies.findIndex(n => n === node);
+        if (index > -1) {
+            this.activeEnemies.splice(index, 1);
+            node.parent = null;
+            node.removeFromParent();
+        }
+    }
+
 
     update(deltaTime: number) { }
 }

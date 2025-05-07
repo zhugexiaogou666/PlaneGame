@@ -52,11 +52,14 @@ export class PlayerControl extends Component {
 
     hit() {
         if (this.hitFlash) {
-            this.hitFlash.showHitFlash();
+            this.hitFlash.triggerHitEffect();
+
         }
     }
     reset() {
-        this.gameManager.stepsLabel.string = "0";
+        if (this.gameManager) {
+            this.gameManager.stepsLabel.string = "0";
+        }
     }
 
     onTouchMove(e: EventTouch) {
@@ -67,22 +70,22 @@ export class PlayerControl extends Component {
     setInputActive(active: boolean) {
         if (active) {
             this.node.on(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
-            this.schedule(this.scheduleBullet, 0.2);
-            this.schedule(this.scheduleSpecialBullet, 0.5);
+            this.schedule(this.scheduleBullet, 0.5);
+            this.schedule(this.scheduleSpecialBullet, 0.8);
         } else {
             this.node.off(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
             this.unschedule(this.scheduleBullet);
             this.unschedule(this.scheduleSpecialBullet);
         }
     }
-    
+
     private scheduleBullet() {
         const { x, y } = this.node.getPosition();
         const node = instantiate(this.bullet);
         node.setParent(this.node.parent);
         node.setPosition(x, y + 70);
     }
-    
+
     private scheduleSpecialBullet() {
         const { x, y } = this.node.getPosition();
         const curEnemy = this.getVisibleEnemies();

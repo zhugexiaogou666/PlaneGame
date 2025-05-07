@@ -1,5 +1,6 @@
 import { _decorator, resources, Component, Sprite, SpriteFrame } from "cc";
 import { EnemyManager } from "./EnemyManager";
+import { BgControl } from "./bgControl";
 const { ccclass, property } = _decorator;
 
 @ccclass("EnemyControl")
@@ -7,17 +8,27 @@ export class EnemyControl extends Component {
     isDead: boolean = false;
     airplaneDeadImages = [];
 
+    private bgControl: BgControl | null = null;
+
     start() {
         this.loadImages();
+        this.bgControl = this.node.scene.getComponentInChildren(BgControl);
     }
 
+    // 更新函数，deltaTime为时间间隔
     update(deltaTime: number) {
+        // 如果角色已经死亡，则直接返回
         if (this.isDead) return;
+        // 获取角色的位置
         const { x, y } = this.node.getPosition();
+        // 计算角色的移动距离
         const moveY = y - 500 * deltaTime;
+        // 设置角色的位置
         this.node.setPosition(x, moveY);
-        if (moveY < -900) {
+        // 如果角色的位置小于-450，则销毁角色，并调用bgControl的onChangeBlood函数
+        if (moveY < -450) {
             this.node.destroy();
+            this.bgControl?.onChangeBlood(1, false);
         }
     }
 
@@ -36,7 +47,7 @@ export class EnemyControl extends Component {
     playDead() {
         for (let i = 0; i < this.airplaneDeadImages.length; i++) {
             setTimeout(() => {
-                if (this.node.getComponent) {
+                if (this.node?.getComponent) {
                     this.node.getComponent(Sprite).spriteFrame =
                         this.airplaneDeadImages[i];
                 }
@@ -52,7 +63,7 @@ export class EnemyControl extends Component {
         this.playDead();
         setTimeout(() => {
             this.node?.destroy?.();
-            const enemyManager = this.node.parent.getComponent(EnemyManager);
+            const enemyManager = this.node?.parent.getComponent(EnemyManager);
             enemyManager?.removeEnemy(this.node);
         }, 300);
     }

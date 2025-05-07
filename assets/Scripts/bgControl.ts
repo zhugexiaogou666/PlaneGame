@@ -3,6 +3,7 @@ import { BulletControl } from "./bulletControl";
 import { BulletControl2 } from "./bullet2Control";
 import { PlayerControl } from "./playerControl";
 import { EnemyControl } from "./ememy0Control";
+import { HitFlash } from "./HitFlash";
 const { ccclass, property } = _decorator;
 
 @ccclass("bgControl")
@@ -24,7 +25,7 @@ export class BgControl extends Component {
     public _currentBlood: number = 3;
     private bloodNodes: Node[] = []; // 存储血条节点
     public _moveBG: boolean = false;
-
+    private invincible: boolean = false;
     public get bloodNumber() {
         return this._currentBlood;
     }
@@ -84,7 +85,7 @@ export class BgControl extends Component {
         } else {
             curBlood = Math.min(curBlood + value, this._bloodNumber);
         }
-        this.currentBlood = curBlood; 
+        this.currentBlood = curBlood;
     }
 
 
@@ -127,7 +128,9 @@ export class BgControl extends Component {
                 const playerControl = player.getComponent(PlayerControl);
                 if (playerControl && enemyControl) {
                     playerControl.hit();
-                    this.onChangeBlood(1, false); // 扣血
+                    if (!this.invincible) {
+                        this.onChangeBlood(1, false); // 扣血
+                    }
                     // enemyControl.die();  
                 }
                 return;
@@ -151,6 +154,8 @@ export class BgControl extends Component {
                 }
             }
         }
+
+        this.invincible = this.playerCtrl.getComponent(HitFlash).invincible;
     }
 }
 

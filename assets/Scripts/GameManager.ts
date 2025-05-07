@@ -74,6 +74,10 @@ export class GameManager extends Component {
             this.playerCtrl.node.setPosition(new Vec3(0, -313.715, 0));
             this.playerCtrl.reset();
         }
+        const enemyManager = this.enemyManagerNode.getComponent(EnemyManager);
+        if (enemyManager) {
+            enemyManager.clearEnemies();
+        }
     }
 
     endGame() {
@@ -88,6 +92,12 @@ export class GameManager extends Component {
 
         if (this.playerCtrl) {
             this.playerCtrl.setInputActive(false);
+            this.playerCtrl.node.setPosition(new Vec3(0, -313.715, 0));
+            this.playerCtrl.reset();
+        }
+        const enemyManager = this.enemyManagerNode.getComponent(EnemyManager);
+        if (enemyManager) {
+            enemyManager.clearEnemies();
         }
     }
 
