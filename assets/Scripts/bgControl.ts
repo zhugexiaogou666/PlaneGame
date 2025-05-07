@@ -114,8 +114,9 @@ export class BgControl extends Component {
             if (bullet && enemy && bulletTags.has(bullet.tag) && enemy.tag === enemyTag) {
                 const enemyControl = enemy.getComponent(EnemyControl);
                 const bulletControl = bullet.getComponent(BulletControl) || bullet.getComponent(BulletControl2);
+                const bulletHit = bulletControl.curHurt;
                 if (enemyControl && bulletControl) {
-                    enemyControl.die(() => { this.stepLabel.string = (parseInt(this.stepLabel.string) + 1).toString() });
+                    enemyControl.playHit(bulletHit, () => { this.stepLabel.string = (parseInt(this.stepLabel.string) + 1).toString() });
                     bulletControl.die();
 
                 }

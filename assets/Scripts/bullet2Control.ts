@@ -18,6 +18,18 @@ export class BulletControl2 extends Component {
     private _playerNode: Node | null = null;
     private _enemyListLength: number = 0;
 
+    @property({ type: Number })
+    _curHurt: number = 1;  // 当前伤害
+
+    // 获取当前伤害值
+    public get curHurt() {
+        return this._curHurt;
+    }
+
+    public set curHurt(value: number) {
+        this._curHurt = value;
+    }
+
     checkInView() {
         const screenSize = view.getVisibleSize();
         const screenRect = new Rect(
