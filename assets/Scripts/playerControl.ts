@@ -70,11 +70,11 @@ export class PlayerControl extends Component {
     setInputActive(active: boolean) {
         if (active) {
             this.node.on(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
-            this.schedule(this.scheduleBullet, 0.5);
+            // this.schedule(this.scheduleBullet, 0.5);
             this.schedule(this.scheduleSpecialBullet, 0.8);
         } else {
             this.node.off(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
-            this.unschedule(this.scheduleBullet);
+            // this.unschedule(this.scheduleBullet);
             this.unschedule(this.scheduleSpecialBullet);
         }
     }

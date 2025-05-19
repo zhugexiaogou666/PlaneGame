@@ -29,7 +29,7 @@ export class EnemyControl extends Component {
         // 获取角色的位置
         const { x, y } = this.node.getPosition();
         // 计算角色的移动距离
-        const moveY = y - 500 * deltaTime;
+        const moveY = y - 50 * deltaTime;
         // 设置角色的位置
         this.node.setPosition(x, moveY);
         // 如果角色的位置小于-450，则销毁角色，并调用bgControl的onChangeBlood函数

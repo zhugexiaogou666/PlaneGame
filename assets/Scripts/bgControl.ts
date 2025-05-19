@@ -4,6 +4,11 @@ import { BulletControl2 } from "./bullet2Control";
 import { PlayerControl } from "./playerControl";
 import { EnemyControl } from "./ememy0Control";
 import { HitFlash } from "./HitFlash";
+import { ECollisionLayer } from "./Collision/CollisionLayers";
+import { collisionHandlers } from "./Collision/ICollisionHandler";
+import { CollisionTag } from "./Collision/CollisionTag";
+import { Bullet2EnemyHandler, BulletEnemyHandler } from "./Collision/CollisionHandle/BulletEnemyHandler";
+import { EnemyPlayerHandler } from "./Collision/CollisionHandle/EnemyPlayerHandler";
 const { ccclass, property } = _decorator;
 
 @ccclass("bgControl")
@@ -51,7 +56,7 @@ export class BgControl extends Component {
     onPhysics2D() {
         PhysicsSystem2D.instance.on(
             Contact2DType.BEGIN_CONTACT,
-            this.onBeginContact,
+            this.handleCollisionEvent,
             this
         );
     }
@@ -94,54 +99,84 @@ export class BgControl extends Component {
         this.currentBlood = curBlood;
     }
 
+    private handleCollisionEvent(self: Collider2D, other: Collider2D) {
+        const layers = this.getCollisionLayers(self, other);
+        const handlerKey = this.getLayerKey(layers.selfLayer, layers.otherLayer);
+        // 查找注册的处理器
+        const handler = collisionHandlers.get(handlerKey);
+        if (handler) {
+            // 保持参数顺序与 layerKey 一致：较小的 layer 对应的 Collider 在前
+            const [first, second] = layers.selfLayer < layers.otherLayer
+                ? [self, other]
+                : [other, self];
+            handler.handleCollision(first, second);
+        } 
+    }
 
-    onBeginContact(self: Collider2D, other: Collider2D) {
-        // 定义子弹标签集合
-        const bulletTags = new Set([0, 2]);
-        // 定义玩家标签
-        const playerTag = 3;
-        // 定义敌人标签
-        const enemyTag = 1;
+    private getLayerKey(layerA: ECollisionLayer, layerB: ECollisionLayer): string {
+        return layerA < layerB
+            ? `${layerA}|${layerB}`
+            : `${layerB}|${layerA}`;
+    }
 
-        // 组合所有可能的碰撞情况，包括敌人和玩家
-        const combinations = [
-            { bullet: self, enemy: other },
-            { bullet: other, enemy: self },
-            { enemy: self, player: other },
-            { enemy: other, player: self }
-        ];
+    private getCollisionLayers(self: Collider2D, other: Collider2D) {
+        return {
+            selfLayer: this.getLayerTag(self),
+            otherLayer: this.getLayerTag(other)
+        };
+    }
 
-        for (const combo of combinations) {
-            const bullet = combo.bullet;
-            const enemy = combo.enemy;
-            const player = combo.player;
+    private getLayerTag(collider: Collider2D): ECollisionLayer {
+        // 这里需要根据实际标签系统实现，例如：
+        return collider.node.getComponent(CollisionTag)?.layer;
+    }
 
-            // 处理子弹与敌人碰撞
-            if (bullet && enemy && bulletTags.has(bullet.tag) && enemy.tag === enemyTag) {
-                const enemyControl = enemy.getComponent(EnemyControl);
-                const bulletControl = bullet.getComponent(BulletControl) || bullet.getComponent(BulletControl2);
-                const bulletHit = bulletControl.curHurt;
-                if (enemyControl && bulletControl) {
-                    enemyControl.playHit(bulletHit, () => { this.stepLabel.string = (parseInt(this.stepLabel.string) + 1).toString() });
-                    bulletControl.die();
+    private initCollisionHandlers() {
+        // 玩家子弹 vs 敌人
+        collisionHandlers.set(
+            this.getLayerKey(ECollisionLayer.PLAYER_BULLET, ECollisionLayer.ENEMY),
+            {
+                handleCollision: (bullet, enemy) => {
+                    new BulletEnemyHandler().handleCollision(bullet, enemy, {
+                        updateScore: () => {
+                            this.stepLabel.string = (parseInt(this.stepLabel.string) + 1).toString();
+                        }
+                    });
                 }
-                return;
             }
+        );
 
-            // 处理敌人与玩家碰撞
-            if (enemy && player && enemy.tag === enemyTag && player.tag === playerTag) {
-                const enemyControl = enemy.getComponent(EnemyControl);
-                const playerControl = player.getComponent(PlayerControl);
-                if (playerControl && enemyControl) {
-                    playerControl.hit();
-                    if (!this.invincible) {
-                        this.onChangeBlood(1, false); // 扣血
-                    }
-                    // enemyControl.die();  
+        collisionHandlers.set(
+            this.getLayerKey(ECollisionLayer.PLAYER_MISSILE, ECollisionLayer.ENEMY),
+            {
+                handleCollision: (bullet, enemy) => {
+                    new Bullet2EnemyHandler().handleCollision(bullet, enemy, {
+                        updateScore: () => {
+                            this.stepLabel.string = (parseInt(this.stepLabel.string) + 1).toString();
+                        }
+                    });
                 }
-                return;
             }
-        }
+        );
+
+        // 敌人 vs 玩家
+        collisionHandlers.set(
+            this.getLayerKey(ECollisionLayer.ENEMY, ECollisionLayer.PLAYER),
+            {
+                handleCollision: (enemy, player) => {
+                    new EnemyPlayerHandler().handleCollision(enemy, player, {
+                        onChangeBlood: (v, isAdd) => this.onChangeBlood(v, isAdd),
+                        isInvincible: () => this.invincible
+                    });
+                }
+            }
+        );
+    }
+
+    // 加载函数
+    onLoad() {
+        // 初始化碰撞处理函数
+        this.initCollisionHandlers();
     }
 
     // 生命周期每帧调用函数

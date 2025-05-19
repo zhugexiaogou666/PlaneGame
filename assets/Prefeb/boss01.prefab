@@ -1,7 +1,7 @@
 [
   {
     "__type__": "cc.Prefab",
-    "_name": "enemy0",
+    "_name": "boss01",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_native": "",
@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "enemy0",
+    "_name": "boss01",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": null,
@@ -28,24 +28,15 @@
       },
       {
         "__id__": 6
-      },
-      {
-        "__id__": 8
-      },
-      {
-        "__id__": 10
-      },
-      {
-        "__id__": 12
       }
     ],
     "_prefab": {
-      "__id__": 14
+      "__id__": 8
     },
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 0,
+      "y": 491.825,
       "z": 0
     },
     "_lrot": {
@@ -57,8 +48,8 @@
     },
     "_lscale": {
       "__type__": "cc.Vec3",
-      "x": 1,
-      "y": 1,
+      "x": 3.5,
+      "y": 3,
       "z": 1
     },
     "_mobility": 0,
@@ -85,8 +76,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 49,
-      "height": 35
+      "width": 108,
+      "height": 57
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -97,7 +88,7 @@
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "24bPFOGwtHu5KFNQROYHQW"
+    "fileId": "86sKprrlJKaYRlH7Sk9EDe"
   },
   {
     "__type__": "cc.Sprite",
@@ -122,7 +113,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "6002d9d4-ed7d-4ec4-9ccf-3e4fc8b14b5c@f9941",
+      "__uuid__": "93a9178f-ce62-4935-931c-1f61e2a2ce27@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,
@@ -142,95 +133,7 @@
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "6ej58fBz5ASpgZ62dKE5UN"
-  },
-  {
-    "__type__": "cc.RigidBody2D",
-    "_name": "",
-    "_objFlags": 0,
-    "__editorExtras__": {},
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "__prefab": {
-      "__id__": 7
-    },
-    "enabledContactListener": true,
-    "bullet": false,
-    "awakeOnLoad": true,
-    "_group": 1,
-    "_type": 1,
-    "_allowSleep": true,
-    "_gravityScale": 1,
-    "_linearDamping": 0,
-    "_angularDamping": 0,
-    "_linearVelocity": {
-      "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
-    },
-    "_angularVelocity": 0,
-    "_fixedRotation": false,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.CompPrefabInfo",
-    "fileId": "37RHMME4pKSL7gHjnXB1kB"
-  },
-  {
-    "__type__": "cc.BoxCollider2D",
-    "_name": "",
-    "_objFlags": 0,
-    "__editorExtras__": {},
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "__prefab": {
-      "__id__": 9
-    },
-    "tag": 1,
-    "_group": 1,
-    "_density": 1,
-    "_sensor": false,
-    "_friction": 0.2,
-    "_restitution": 0,
-    "_offset": {
-      "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
-    },
-    "_size": {
-      "__type__": "cc.Size",
-      "width": 49,
-      "height": 35
-    },
-    "_id": ""
-  },
-  {
-    "__type__": "cc.CompPrefabInfo",
-    "fileId": "3btl5aqUJErZPteOd3ZfiJ"
-  },
-  {
-    "__type__": "56c45xqrllJWrUETwSA0m8x",
-    "_name": "",
-    "_objFlags": 0,
-    "__editorExtras__": {},
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "__prefab": {
-      "__id__": 11
-    },
-    "maxHealth": 2,
-    "currentHealth": 2,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.CompPrefabInfo",
-    "fileId": "52FgR7L0JAEKOyPHXID4ll"
+    "fileId": "2fZjsrYs5NxZjvZcPJJidd"
   },
   {
     "__type__": "cec5b04HNZDRqyDq5njVf/x",
@@ -242,15 +145,15 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 13
+      "__id__": 7
     },
-    "layer": 3076,
+    "layer": 3080,
     "enablePhysics": true,
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "5fthlGWP5D7Kk0mFxRlX62"
+    "fileId": "9cwHFBl6tArqV4BPYAaEh1"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -260,7 +163,7 @@
     "asset": {
       "__id__": 0
     },
-    "fileId": "58psyOJOVKdo/AWipxYuLX",
+    "fileId": "fc26eCQiJIsaBK7/1YM2S7",
     "instance": null,
     "targetOverrides": null
   }
